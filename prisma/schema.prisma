@@ -1,0 +1,286 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  PATIENT
+  DOCTOR
+  RECEPTIONIST
+  ADMIN
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  phone        String?
+  passwordHash String
+  role         String     @default("PATIENT") // PATIENT, DOCTOR, RECEPTIONIST, ADMIN
+  status       String     @default("ACTIVE")  // ACTIVE, SUSPENDED, INACTIVE
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  patient      Patient?
+  doctor       Doctor?
+  notifications Notification[]
+  auditLogs    AuditLog[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Patient {
+  id               String        @id @default(cuid())
+  userId           String        @unique
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateOfBirth      String?
+  gender           String?       // Male, Female, Other
+  bloodGroup       String?       // A+, A-, B+, B-, AB+, AB-, O+, O-
+  address          String?
+  emergencyContact String?
+  medicalHistory   String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  appointments     Appointment[]
+}
+
+model Department {
+  id          String        @id @default(cuid())
+  name        String        @unique
+  slug        String        @unique
+  description String
+  icon        String?       // Lucide icon name or emoji
+  image       String?       // Unsplash image URL
+  status      String        @default("ACTIVE") // ACTIVE, INACTIVE
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  doctors      Doctor[]
+  appointments Appointment[]
+}
+
+model Doctor {
+  id                 String               @id @default(cuid())
+  userId             String               @unique
+  user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  departmentId       String
+  department         Department           @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  qualification      String               // MBBS, MD, DM, etc.
+  specialization     String               // e.g., Senior Interventional Cardiologist
+  experienceYears    Int                  @default(0)
+  registrationNumber String?              // AP Medical Council Reg Number
+  consultationFee    Float                @default(500.0)
+  languages          String?              // Telugu, English, Hindi
+  biography          String?
+  photo              String?              // Unsplash image URL
+  status             String               @default("ACTIVE") // ACTIVE, ON_LEAVE, INACTIVE
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  availabilities     DoctorAvailability[]
+  unavailabilities   DoctorUnavailability[]
+  appointments       Appointment[]
+
+  @@index([departmentId])
+  @@index([status])
+}
+
+model DoctorAvailability {
+  id                     String   @id @default(cuid())
+  doctorId               String
+  doctor                 Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  dayOfWeek              Int      // 0 (Sunday) to 6 (Saturday)
+  startTime              String   // e.g. "09:00"
+  endTime                String   // e.g. "17:00"
+  slotDurationMinutes    Int      @default(30)
+  maxAppointmentsPerSlot Int      @default(1)
+  createdAt              DateTime @default(now())
+
+  @@index([doctorId, dayOfWeek])
+}
+
+model DoctorUnavailability {
+  id        String   @id @default(cuid())
+  doctorId  String
+  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  startDate String   // YYYY-MM-DD
+  endDate   String   // YYYY-MM-DD
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@index([doctorId, startDate])
+}
+
+model HospitalHoliday {
+  id          String   @id @default(cuid())
+  name        String
+  date        String   // YYYY-MM-DD
+  description String?
+  createdAt   DateTime @default(now())
+
+  @@index([date])
+}
+
+model Appointment {
+  id                 String     @id @default(cuid())
+  appointmentNumber  String     @unique // e.g. APT-20260923-001
+  patientId          String
+  patient            Patient    @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  doctorId           String
+  doctor             Doctor     @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  departmentId       String
+  department         Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  appointmentDate    String     // YYYY-MM-DD
+  startTime          String     // HH:mm (e.g. "10:30")
+  endTime            String     // HH:mm (e.g. "11:00")
+  appointmentType    String     @default("IN_PERSON") // IN_PERSON, FOLLOW_UP, TELECONSULT
+  reason             String?
+  status             String     @default("PENDING") // PENDING, CONFIRMED, CHECKED_IN, COMPLETED, CANCELLED, NO_SHOW
+  consultationNotes  String?
+  cancellationReason String?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  @@unique([doctorId, appointmentDate, startTime])
+  @@index([appointmentDate])
+  @@index([doctorId])
+  @@index([patientId])
+  @@index([status])
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  category    String   // EMERGENCY, CRITICAL_CARE, DIAGNOSTICS, INPATIENT, SURGICAL
+  description String
+  icon        String?
+  image       String?
+  facilities  String?  // JSON string or comma separated features
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model HealthPackage {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  description     String
+  includedTests   String   // JSON string or comma separated list of tests
+  originalPrice   Float
+  discountedPrice Float
+  validityDays    Int      @default(30)
+  image           String?
+  isPopular       Boolean  @default(false)
+  status          String   @default("ACTIVE")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   @default("INFO") // INFO, SUCCESS, WARNING, APPOINTMENT
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  mobile    String
+  email     String?
+  subject   String
+  message   String
+  status    String   @default("NEW") // NEW, IN_PROGRESS, RESOLVED
+  createdAt DateTime @default(now())
+
+  @@index([status])
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  patientName String
+  department  String
+  rating      Int      @default(5)
+  comment     String
+  isApproved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([isApproved])
+}
+
+model HealthArticle {
+  id              String   @id @default(cuid())
+  title           String
+  slug            String   @unique
+  excerpt         String
+  content         String
+  category        String   // CARDIOLOGY, NEUROLOGY, WELLNESS, PREVENTIVE, DIABETES
+  authorName      String
+  readTimeMinutes Int      @default(5)
+  image           String?
+  isPublished     Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([isPublished])
+  @@index([category])
+}
+
+model Faq {
+  id         String   @id @default(cuid())
+  question   String
+  answer     String
+  category   String   @default("GENERAL") // GENERAL, APPOINTMENTS, EMERGENCY, BILLING
+  orderIndex Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model HospitalSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String   // e.g. "USER_LOGIN", "APPOINTMENT_CREATED", "STATUS_CHANGE"
+  entity    String   // "Appointment", "Doctor", "User", etc.
+  entityId  String?
+  details   String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([action])
+  @@index([entity])
+  @@index([createdAt])
+}
