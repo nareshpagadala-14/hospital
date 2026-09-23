@@ -43,9 +43,11 @@ export default function GlobalSearchModal({
 
   useEffect(() => {
     if (!query.trim() || query.length < 2) {
-      setResults({ doctors: [], departments: [], services: [], packages: [], articles: [] });
-      setLoading(false);
-      return;
+      const timer = setTimeout(() => {
+        setResults({ doctors: [], departments: [], services: [], packages: [], articles: [] });
+        setLoading(false);
+      }, 0);
+      return () => clearTimeout(timer);
     }
 
     const timer = setTimeout(async () => {
