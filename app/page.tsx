@@ -157,45 +157,47 @@ export default function HomePage() {
               </p>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3.5 pt-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-2">
                 <Link
                   href="#appointment"
-                  className="flex items-center space-x-2 bg-gradient-to-r from-sky-500 to-teal-500 hover:from-sky-600 hover:to-teal-600 text-white font-bold px-6 py-3.5 rounded-2xl shadow-lg shadow-sky-600/30 transition transform hover:-translate-y-0.5 text-xs sm:text-sm uppercase tracking-wider"
+                  className="flex items-center justify-center space-x-2 bg-gradient-to-r from-sky-500 to-teal-500 hover:from-sky-600 hover:to-teal-600 text-white font-bold px-6 py-3.5 rounded-2xl shadow-lg shadow-sky-600/30 transition transform hover:-translate-y-0.5 text-xs sm:text-sm uppercase tracking-wider text-center"
                 >
                   <Calendar className="w-4 h-4" />
                   <span>Book Appointment</span>
                 </Link>
 
-                <Link
-                  href="/doctors"
-                  className="flex items-center space-x-2 bg-white/10 hover:bg-white/15 text-white font-bold px-5 py-3.5 rounded-2xl border border-white/20 backdrop-blur-md transition text-xs sm:text-sm"
-                >
-                  <Stethoscope className="w-4 h-4 text-sky-400" />
-                  <span>Find a Doctor</span>
-                </Link>
+                <div className="grid grid-cols-2 sm:flex sm:items-center gap-2.5">
+                  <Link
+                    href="/doctors"
+                    className="flex items-center justify-center space-x-2 bg-white/10 hover:bg-white/15 text-white font-bold px-4 py-3.5 rounded-2xl border border-white/20 backdrop-blur-md transition text-xs sm:text-sm text-center"
+                  >
+                    <Stethoscope className="w-4 h-4 text-sky-400" />
+                    <span>Doctors</span>
+                  </Link>
 
-                <button
-                  onClick={() => setEmergencyOpen(true)}
-                  className="flex items-center space-x-2 bg-red-600/90 hover:bg-red-600 text-white font-bold px-5 py-3.5 rounded-2xl border border-red-500 shadow-lg shadow-red-600/30 transition text-xs sm:text-sm"
-                >
-                  <PhoneCall className="w-4 h-4 animate-bounce" />
-                  <span>24/7 Emergency</span>
-                </button>
+                  <button
+                    onClick={() => setEmergencyOpen(true)}
+                    className="flex items-center justify-center space-x-2 bg-red-600/90 hover:bg-red-600 text-white font-bold px-4 py-3.5 rounded-2xl border border-red-500 shadow-lg shadow-red-600/30 transition text-xs sm:text-sm text-center"
+                  >
+                    <PhoneCall className="w-4 h-4 animate-bounce" />
+                    <span>Emergency</span>
+                  </button>
+                </div>
               </div>
 
               {/* Trust Indicators */}
-              <div className="pt-6 border-t border-slate-800/80 grid grid-cols-3 gap-4 max-w-lg text-slate-300">
+              <div className="pt-6 border-t border-slate-800/80 grid grid-cols-3 gap-3 sm:gap-4 max-w-lg text-slate-300">
                 <div>
-                  <p className="text-2xl font-extrabold text-white">18+</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Years of Service</p>
+                  <p className="text-xl sm:text-2xl font-extrabold text-white">18+</p>
+                  <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">Years of Care</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-extrabold text-white">150+</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Specialist Doctors</p>
+                  <p className="text-xl sm:text-2xl font-extrabold text-white">150+</p>
+                  <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">Specialists</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-extrabold text-emerald-400">NABH</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Quality Accredited</p>
+                  <p className="text-xl sm:text-2xl font-extrabold text-emerald-400">NABH</p>
+                  <p className="text-[11px] sm:text-xs text-slate-400 mt-0.5">Accredited</p>
                 </div>
               </div>
             </div>
@@ -203,7 +205,7 @@ export default function HomePage() {
             {/* Right Column: 3D WebGL Canvas + Floating Glass Cards */}
             <div className="lg:col-span-5 relative flex items-center justify-center">
               {/* 3D Canvas Container */}
-              <div className="w-full h-[400px] sm:h-[480px] relative rounded-3xl overflow-hidden border border-white/10 bg-slate-900/40 backdrop-blur-xl shadow-2xl flex items-center justify-center">
+              <div className="w-full h-[300px] sm:h-[400px] lg:h-[480px] relative rounded-3xl overflow-hidden border border-white/10 bg-slate-900/40 backdrop-blur-xl shadow-2xl flex items-center justify-center">
                 <MedicalCanvas3D />
 
                 {/* Floating Glass Information Card 1: 24/7 Emergency */}

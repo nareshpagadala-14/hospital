@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import MobileBottomBar from "@/components/mobile-bottom-bar";
 
 export const metadata: Metadata = {
   title: "AIMS Prime Super Speciality Hospital | Guntur, Andhra Pradesh",
@@ -32,8 +33,9 @@ export default function RootLayout({
     <html lang="en" className="h-full scroll-smooth">
       <body className="min-h-full flex flex-col bg-slate-50 text-slate-900 font-sans antialiased">
         <Navbar />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-20 lg:pb-0">{children}</main>
         <Footer />
+        <MobileBottomBar />
       </body>
     </html>
   );

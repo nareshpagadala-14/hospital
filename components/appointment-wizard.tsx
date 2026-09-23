@@ -464,7 +464,7 @@ export default function AppointmentWizard({
               <label className="block text-xs font-semibold text-slate-700 mb-2">
                 Available Upcoming Days in Guntur Clinic:
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+              <div className="flex sm:grid sm:grid-cols-5 gap-2.5 overflow-x-auto pb-2 scrollbar-none snap-x">
                 {upcomingDates.map((item) => {
                   const isSelected = selectedDate === item.dateStr;
                   return (
@@ -472,7 +472,7 @@ export default function AppointmentWizard({
                       key={item.dateStr}
                       type="button"
                       onClick={() => setSelectedDate(item.dateStr)}
-                      className={`p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center ${
+                      className={`min-w-[85px] sm:min-w-0 p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center snap-start flex-shrink-0 sm:flex-shrink ${
                         isSelected
                           ? "border-sky-600 bg-sky-600 text-white shadow-md shadow-sky-600/30"
                           : "border-slate-200 hover:border-sky-300 bg-white text-slate-700 hover:bg-slate-50"
@@ -580,7 +580,7 @@ export default function AppointmentWizard({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-2.5">
                   {availableSlots.map((slot) => {
                     const isSelected = selectedSlot?.startTime === slot.startTime;
                     return (
