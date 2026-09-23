@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ArrowLeft, Clock, User, ShieldAlert, Calendar } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function ArticleDetailPage({
   params,
 }: {
