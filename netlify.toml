@@ -1,11 +1,11 @@
 [build]
   command = "npx prisma generate && npm run build"
-  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 [build.environment]
   NODE_VERSION = "20"
-  DATABASE_URL = "file:./dev.db"
-  AUTH_SECRET = "hospital_ultra_secure_jwt_secret_guntur_super_speciality_2026"
   NEXT_PUBLIC_HOSPITAL_NAME = "AIMS Prime Super Speciality Hospital"
   NEXT_PUBLIC_HOSPITAL_LOCATION = "Guntur, Andhra Pradesh, India"
   NEXT_PUBLIC_EMERGENCY_HOTLINE = "+91 863 234 5678"
