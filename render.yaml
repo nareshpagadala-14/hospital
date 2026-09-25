@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: aims-hospital
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: DATABASE_URL
+        value: file:./dev.db
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: NEXT_PUBLIC_HOSPITAL_NAME
+        value: AIMS Prime Super Speciality Hospital
+      - key: NEXT_PUBLIC_HOSPITAL_LOCATION
+        value: Guntur, Andhra Pradesh, India
+      - key: NEXT_PUBLIC_EMERGENCY_HOTLINE
+        value: "+91 863 234 5678"
+      - key: NEXT_PUBLIC_AMBULANCE_NUMBER
+        value: "+91 863 234 9999"

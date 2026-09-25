@@ -226,7 +226,7 @@ async function main() {
       consultationFee: 650.0,
       languages: "Telugu, English",
       biography: "Specialist in acute ischemic stroke intervention, refractory epilepsy, Parkinson's disease, and neuro-immunology. Recipient of prestigious state clinical research awards.",
-      photo: "https://images.unsplash.com/photo-1594824813501-48995a940455?auto=format&fit=crop&w=800&q=80",
+      photo: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80",
     },
     {
       user: {
